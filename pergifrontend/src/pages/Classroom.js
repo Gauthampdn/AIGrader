@@ -13,6 +13,8 @@ import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { Document, Page } from 'react-pdf';
+
 
 import {
   AlertDialog,
@@ -30,6 +32,13 @@ import {
 
 
 const Classroom = () => {
+  const [pdfUrl, setPdfUrl] = useState('');
+
+  // Function to update the PDF URL
+  const loadPdf = (url) => {
+    console.log(url)
+    setPdfUrl(url);
+  };
   const navigate = useNavigate();
 
   const { templates, dispatch } = useAssignmentsContext();
@@ -143,7 +152,6 @@ const Classroom = () => {
   }, [user]); // This effect should run when the component mounts and whenever the ID changes.
 
 
-
   return (
     <div className="flex flex-col h-screen bg-gray-300">
       <Navbar />
@@ -190,6 +198,19 @@ const Classroom = () => {
                   <h2 className="font-bold text-lg">Rubric:</h2>
                   <p className="text-sm">{selectedAssignment.rubric}</p>
                 </div>
+                <div className="flex-1">
+                <h2 className="font-bold text-lg">Submission:</h2>
+                {pdfUrl ? (
+              <iframe 
+              src= {`https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`}
+              width="100%"
+              height="600px"
+              style={{ border: 'black' }}
+          ></iframe>
+            ) : (
+        < p>No file selected</p>
+            )}
+      </div>
 
 
                 {user && (user.authority === "student" || user.authority === "teacher") && (
@@ -247,8 +268,10 @@ const Classroom = () => {
 
                                     <p> {submission.status}</p>
                                     <Separator orientation="vertical" />
-
-                                    <a href={submission.pdfURL} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">Submission</a>
+                                    
+                                    
+                                    
+                                    <button onClick={() => loadPdf(submission.pdfURL)} className="text-blue-500 hover:text-blue-700">Submission</button>
                                   </div>
                                 </div>
                               </React.Fragment>
